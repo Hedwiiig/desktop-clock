@@ -1,4 +1,6 @@
-#define MILLIS_PER_SEG 1000 // Definir como 1000 para representar segundos
+// Please tune the following value if the clock gains or loses.
+// Theoretically, standard of this value is 60000.
+#define MILLIS_PER_MIN 1000 // milliseconds per a minute
 
 // Motor and clock parameters
 // 4096 * 90 / 12 = 30720
@@ -6,10 +8,9 @@
 
 // wait for a single step of stepper
 int delaytime = 2;
-long min = 0; // Mudar de millis para minutos
-long sec = 0; // Adicionar uma variável para os segundos
+
 // ports used to control the stepper motor
-// if your motor rotate to the opposite direction,
+// if your motor rotate to the opposite direction, 
 // change the order as {2, 3, 4, 5};
 int port[4] = {5, 4, 3, 2};
 
@@ -32,16 +33,16 @@ void rotate(int step) {
   int dt = 20;
 
   step = (step > 0) ? step : -step;
-  for (j = 0; j < step; j++) {
+  for(j = 0; j < step; j++) {
     phase = (phase + delta) % 8;
-    for (i = 0; i < 4; i++) {
+    for(i = 0; i < 4; i++) {
       digitalWrite(port[i], seq[phase][i]);
     }
     delay(dt);
-    if (dt > delaytime) dt--;
+    if(dt > delaytime) dt--;
   }
   // power cut
-  for (i = 0; i < 4; i++) {
+  for(i = 0; i < 4; i++) {
     digitalWrite(port[i], LOW);
   }
 }
@@ -57,25 +58,20 @@ void setup() {
 }
 
 void loop() {
-  static long prev_min = 0, prev_sec = 0;
-  // Atualizar a variável min para representar minutos
-  min = millis() / MILLIS_PER_SEG;
-
-  if (prev_min == min) {
+  static long prev_min = 0, prev_pos = 0;
+  long min;
+  static long pos;
+  
+  min = millis() / MILLIS_PER_MIN;
+  if(prev_min == min) {
     return;
   }
-
   prev_min = min;
-  // Atualizar a variável sec para representar segundos
-  sec = (min * 60) % 60;
-
-  rotate(-20); // para execução de aproximação
-  rotate(20); // execução de aproximação sem carga pesada
-
-  // Girar para a nova posição representada pelos segundos
-  if (sec - prev_sec > 0) {
-    rotate(sec - prev_sec);
+  pos = (STEPS_PER_ROTATION * min) / 60;
+  rotate(-20); // for approach run
+  rotate(20); // approach run without heavy load
+  if(pos - prev_pos > 0) {
+    rotate(pos - prev_pos);
   }
-
-  prev_sec = sec;
+  prev_pos = pos;
 }
