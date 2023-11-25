@@ -1,7 +1,7 @@
 #include <Stepper.h>
 
 #define passos 30720  // Número de passos por revolução do motor
-#define rpm 60      // Velocidade em rotações por minuto
+#define rpm 60      // Velocidade em rotações por minuto(para inverter o sentido basta por em negativo)
 
 int port[4] = {2, 3, 4, 5};  // Pinos usados para controlar o motor
 int i = 0;
