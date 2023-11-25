@@ -1,3 +1,4 @@
+
 #include <Stepper.h>
 
 #define passos 30720  // Número de passos por revolução do motor
@@ -17,11 +18,13 @@ void setup() {
   for (i = 0; i < 4; i++) {
     pinMode(port[i], OUTPUT);
   }
+
   // Inicializa a comunicação serial
   Serial.begin(9600);
 }
 
 void loop() {
+  
   motor.step(passos);  // O número de passos é igual ao número de passos por revolução
-
+  
 }
