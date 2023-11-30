@@ -5,7 +5,7 @@
 #define passos 30720  // Número de passos por revolução do motor
 #define rpm 60         // Velocidade em rotações por minuto (para inverter o sentido, basta colocar em negativo)
 
-int port[4] = {2, 3, 4, 5};  // Pinos usados para controlar o motor
+int port[4] = {7, 8, 10, 11};  // Pinos usados para controlar o motor
 int i = 0;
 
 // Configurações do Bluetooth ======================================
@@ -23,7 +23,7 @@ unsigned int count;
 // Configurações do Sensor Ultrassônico HC-SR04 =====================
 # define trigPin 13
 # define echoPin 12
-int distancia = 20;
+int distancia = 10;
 
 // Cria um objeto da classe Stepper
 Stepper motor(passos, port[0], port[1], port[2], port[3]);
