@@ -3,7 +3,7 @@
 #define passos 30720  // Número de passos por revolução do motor
 #define rpm 60      // Velocidade em rotações por minuto(para inverter o sentido basta por em negativo)
 
-int port[4] = {2, 3, 4, 5};  // Pinos usados para controlar o motor
+int port[4] = {7, 8, 10, 11};  // Pinos usados para controlar o motor
 int i = 0;
 
 // Cria um objeto da classe Stepper
