@@ -5,8 +5,8 @@ int delaytime = 1;
 // ports used to control the stepper motor
 // if your motor rotate to the opposite direction, 
 //change the order as {2, 3, 4, 5};
-int port[4] = {8, 9, 10, 11};
-
+int port[4] = {11, 10, 9, 8};
+int passos = 200;
 // sequence of stepper motor control
 int seq[8][4] = {
   {  LOW, HIGH, HIGH,  LOW},// 8 estados diferentes pois o motor e de 4 fases 4*2
@@ -44,7 +44,7 @@ void setup() {
 }
 void loop() {
   for(int i = 0; i < 10; i++) {
-    rotate(200);
+    rotate(passos);
   }
 //  delay(1000);
 }

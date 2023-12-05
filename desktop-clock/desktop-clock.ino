@@ -1,12 +1,23 @@
-#include <Stepper.h>
+
 #include <SoftwareSerial.h>
 
 // Configurações do motor de passo =================================
-#define passos 30720  // Número de passos por revolução do motor
-#define rpm 60         // Velocidade em rotações por minuto (para inverter o sentido, basta colocar em negativo)
-
-int port[4] = {7, 8, 10, 11};  // Pinos usados para controlar o motor
+#define passos 8  // Número de passos por revolução do motor
+int port[4] = {11, 10, 9, 8};  // Pinos usados para controlar o motor
 int i = 0;
+int j = 0;
+static int phase = 0;
+int delaytime = 1;
+int seq[8][4] = {
+  {  LOW, HIGH, HIGH,  LOW},// 8 estados diferentes pois o motor e de 4 fases 4*2
+  {  LOW,  LOW, HIGH,  LOW},
+  {  LOW,  LOW, HIGH, HIGH},
+  {  LOW,  LOW,  LOW, HIGH},
+  { HIGH,  LOW,  LOW, HIGH},
+  { HIGH,  LOW,  LOW,  LOW},
+  { HIGH, HIGH,  LOW,  LOW},
+  {  LOW, HIGH,  LOW,  LOW}
+};
 
 // Configurações do Bluetooth ======================================
 #define rx 0
@@ -24,9 +35,6 @@ unsigned int count;
 # define trigPin 13
 # define echoPin 12
 int distancia = 10;
-
-// Cria um objeto da classe Stepper
-Stepper motor(passos, port[0], port[1], port[2], port[3]);
 
 // Função para medir a distância com o sensor ultrassônico
 float measureDistance() {
@@ -49,9 +57,6 @@ float measureDistance() {
 }
 
 void setup() {
-  // Define a velocidade em rotações por minuto para o motor de passo
-  motor.setSpeed(rpm);
-  bluetooth.begin(9600);
   // Configuração dos pinos como saída
   for (i = 0; i < 4; i++) {
     pinMode(port[i], OUTPUT);
@@ -64,9 +69,19 @@ void setup() {
 }
 
 void loop() {
+  
   // Move o motor de passo em um passo
-  motor.step(passos);
-
+    for(j = 0; j < passos; j++) {
+    phase = (phase + 1) % 8; //se resto = 0 entao restart.
+    for(i = 0; i < 4; i++) {
+      digitalWrite(port[i], seq[phase][i]);
+    }
+    delay(delaytime);
+  }
+  // power cut
+  for(i = 0; i < 4; i++) { // todos a low
+    digitalWrite(port[i], LOW);
+  }
   // Verifica se há dados disponíveis no módulo Bluetooth
   if (bluetooth.available() > 0) {
     // Lê valor de horas
