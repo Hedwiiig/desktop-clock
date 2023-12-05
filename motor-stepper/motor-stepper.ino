@@ -1,27 +1,50 @@
-#include <Stepper.h>
+// wait for a single step of stepper
+int delaytime = 1;
 
-#define passos 30720  // Número de passos por revolução do motor
-#define rpm 60      // Velocidade em rotações por minuto(para inverter o sentido basta por em negativo)
 
-int port[4] = {7, 8, 10, 11};  // Pinos usados para controlar o motor
-int i = 0;
+// ports used to control the stepper motor
+// if your motor rotate to the opposite direction, 
+//change the order as {2, 3, 4, 5};
+int port[4] = {8, 9, 10, 11};
 
-// Cria um objeto da classe Stepper
-Stepper motor(passos, port[0], port[1], port[2], port[3]);
+// sequence of stepper motor control
+int seq[8][4] = {
+  {  LOW, HIGH, HIGH,  LOW},// 8 estados diferentes pois o motor e de 4 fases 4*2
+  {  LOW,  LOW, HIGH,  LOW},
+  {  LOW,  LOW, HIGH, HIGH},
+  {  LOW,  LOW,  LOW, HIGH},
+  { HIGH,  LOW,  LOW, HIGH},
+  { HIGH,  LOW,  LOW,  LOW},
+  { HIGH, HIGH,  LOW,  LOW},
+  {  LOW, HIGH,  LOW,  LOW}
+};
 
-void setup() {
-  // Define a velocidade em rotações por minuto
-  motor.setSpeed(rpm);
-
-  // Configuração dos pinos como saída
-  for (i = 0; i < 4; i++) {
-    pinMode(port[i], OUTPUT);
+void rotate(int step) {
+  static int phase = 0;
+  int i, j;
+  
+  for(j = 0; j < step; j++) {
+    phase = (phase + 1) % 8; //se resto = 0 entao restart.
+    for(i = 0; i < 4; i++) {
+      digitalWrite(port[i], seq[phase][i]);
+    }
+    delay(delaytime);
   }
-  // Inicializa a comunicação serial
-  Serial.begin(9600);
+  // power cut
+  for(i = 0; i < 4; i++) { // todos a low
+    digitalWrite(port[i], LOW);
+  }
 }
 
+void setup() {
+  pinMode(port[0], OUTPUT);
+  pinMode(port[1], OUTPUT);
+  pinMode(port[2], OUTPUT);
+  pinMode(port[3], OUTPUT);
+}
 void loop() {
-  motor.step(passos);  // O número de passos é igual ao número de passos por revolução
-
+  for(int i = 0; i < 10; i++) {
+    rotate(200);
+  }
+//  delay(1000);
 }
