@@ -1,13 +1,12 @@
-
 #include <SoftwareSerial.h>
 
 // Configurações do motor de passo =================================
 #define passos 8  // Número de passos por revolução do motor
 int port[4] = {11, 10, 9, 8};  // Pinos usados para controlar o motor
-int i = 0;
-int j = 0;
-static int phase = 0;
 int delaytime = 1;
+static int phase = 0;
+int i, j;
+
 int seq[8][4] = {
   {  LOW, HIGH, HIGH,  LOW},// 8 estados diferentes pois o motor e de 4 fases 4*2
   {  LOW,  LOW, HIGH,  LOW},
@@ -18,13 +17,29 @@ int seq[8][4] = {
   { HIGH, HIGH,  LOW,  LOW},
   {  LOW, HIGH,  LOW,  LOW}
 };
+//função de rotação=================================================
+
+void rotacao(int step) {
+
+  for (j = 0; j < step; j++) {
+    phase = (phase + 1) % 8; //se resto = 0 entao restart.
+    for (i = 0; i < 4; i++) {
+      digitalWrite(port[i], seq[phase][i]);
+    }
+    delay(delaytime);
+  }
+  // power cut
+  for (i = 0; i < 4; i++) { // todos a low
+    digitalWrite(port[i], LOW);
+  }
+}
 
 // Configurações do Bluetooth ======================================
 #define rx 0
 #define tx 1
 
-unsigned int h, m, s;
-unsigned int total;
+unsigned int h = 0, m = 0, s = 0;
+unsigned int total = 0;
 SoftwareSerial bluetooth(rx, tx); // RX, TX
 
 // Configurações do buzzer =========================================
@@ -69,17 +84,11 @@ void setup() {
 }
 
 void loop() {
-  
-  // Move o motor de passo em um passo
-    for(j = 0; j < passos; j++) {
-    phase = (phase + 1) % 8; //se resto = 0 entao restart.
-    for(i = 0; i < 4; i++) {
-      digitalWrite(port[i], seq[phase][i]);
-    }
-    delay(delaytime);
-  }
+
+  rotacao(passos);
+
   // power cut
-  for(i = 0; i < 4; i++) { // todos a low
+  for (i = 0; i < 4; i++) { // todos a low
     digitalWrite(port[i], LOW);
   }
   // Verifica se há dados disponíveis no módulo Bluetooth
@@ -122,7 +131,6 @@ void loop() {
     bluetooth.print(" total em seg= ");
     bluetooth.println(total);
   }
-
   // Decrementa a contagem
   count--;
 
