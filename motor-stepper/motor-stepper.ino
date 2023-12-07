@@ -3,10 +3,10 @@ int delaytime = 1;
 
 
 // ports used to control the stepper motor
-// if your motor rotate to the opposite direction,
+// if your motor rotate to the opposite direction, 
 //change the order as {2, 3, 4, 5};
-int port[4] = {11, 10, 9, 8};
-int passos = 200;
+int port[4] = {8, 9, 10, 11};
+
 // sequence of stepper motor control
 int seq[8][4] = {
   {  LOW, HIGH, HIGH,  LOW},// 8 estados diferentes pois o motor e de 4 fases 4*2
@@ -22,16 +22,16 @@ int seq[8][4] = {
 void rotate(int step) {
   static int phase = 0;
   int i, j;
-
-  for (j = 0; j < step; j++) {
+  
+  for(j = 0; j < step; j++) {
     phase = (phase + 1) % 8; //se resto = 0 entao restart.
-    for (i = 0; i < 4; i++) {
+    for(i = 0; i < 4; i++) {
       digitalWrite(port[i], seq[phase][i]);
     }
     delay(delaytime);
   }
   // power cut
-  for (i = 0; i < 4; i++) { // todos a low
+  for(i = 0; i < 4; i++) { // todos a low
     digitalWrite(port[i], LOW);
   }
 }
@@ -43,8 +43,8 @@ void setup() {
   pinMode(port[3], OUTPUT);
 }
 void loop() {
-  for (int i = 0; i < 10; i++) {
-    rotate(passos);
+  for(int i = 0; i < 10; i++) {
+    rotate(200);
   }
-  //  delay(1000);
+//  delay(1000);
 }
