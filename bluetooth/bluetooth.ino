@@ -14,25 +14,25 @@ void setup() {
 
 void loop() {
   // Verifica se há dados disponíveis no módulo Bluetooth
-  if (bluetooth.available() > 0) {
+  if (bluetooth.available()) {
     // Ler valor de horas
     bluetooth.print("horas= ");
-    h = bluetooth.parseInt(); // Lê o valor de horas
-    while (bluetooth.read() != '\n') {}// Aguarda a quebra de linha após o valor de horas
+    String horas_str = bluetooth.readStringUntil('\n');
+    h = horas_str.toInt(); // Converte o valor de horas para inteiro
     bluetooth.println(""); // Envia uma quebra de linha
 
     // Ler valor de minutos
     bluetooth.print("minutos= ");
-    m = bluetooth.parseInt(); // Lê o valor de minutos
-    while (bluetooth.read() != '\n') {} // Aguarda a quebra de linha após o valor de minutos
+    String minutos_str = bluetooth.readStringUntil('\n');
+    m = minutos_str.toInt(); // Converte o valor de minutos para inteiro
     bluetooth.println(""); // Envia uma quebra de linha
 
     // Ler valor de segundos
     bluetooth.print("segundos= ");
-    s = bluetooth.parseInt(); // Lê o valor de segundos
-    while (bluetooth.read() != '\n') {} // Aguarda a quebra de linha após o valor de segundos
+    String segundos_str = bluetooth.readStringUntil('\n');
+    s = segundos_str.toInt(); // Converte o valor de segundos para inteiro
     bluetooth.println(""); // Envia uma quebra de linha
-    
+
     // Exibe os valores lidos no Monitor Serial
     Serial.print("horas= ");
     Serial.print(h);
