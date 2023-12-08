@@ -1,7 +1,10 @@
 #include <SoftwareSerial.h>
 
-#define rx 0
-#define tx 1
+#define rx 6
+#define tx 5
+String minutos_str;
+String horas_str;
+String segundos_str;
 
 unsigned int h, m, s;
 unsigned int total;
@@ -9,29 +12,36 @@ SoftwareSerial bluetooth(rx, tx); // RX, TX
 
 void setup() {
   Serial.begin(9600);
-  bluetooth.begin(9600);
+  bluetooth.begin(38400);
 }
 
 void loop() {
   // Verifica se há dados disponíveis no módulo Bluetooth
-  if (bluetooth.available()) {
+  
     // Ler valor de horas
+    while(!bluetooth.available() && horas_str == 0){
     bluetooth.print("horas= ");
-    String horas_str = bluetooth.readStringUntil('\n');
+    horas_str = bluetooth.readStringUntil('\n');
     h = horas_str.toInt(); // Converte o valor de horas para inteiro
-    bluetooth.println(""); // Envia uma quebra de linha
+    bluetooth.println("");
+    } // Envia uma quebra de linha
 
     // Ler valor de minutos
+    while(!bluetooth.available() && minutos_str == 0)
+    {
     bluetooth.print("minutos= ");
-    String minutos_str = bluetooth.readStringUntil('\n');
+    minutos_str = bluetooth.readStringUntil('\n');
     m = minutos_str.toInt(); // Converte o valor de minutos para inteiro
-    bluetooth.println(""); // Envia uma quebra de linha
+    bluetooth.println("");
+    } // Envia uma quebra de linha
 
     // Ler valor de segundos
+    while(!bluetooth.available() && segundos_str == 0){
     bluetooth.print("segundos= ");
-    String segundos_str = bluetooth.readStringUntil('\n');
+    segundos_str = bluetooth.readStringUntil('\n');
     s = segundos_str.toInt(); // Converte o valor de segundos para inteiro
-    bluetooth.println(""); // Envia uma quebra de linha
+    bluetooth.println("");
+    } // Envia uma quebra de linha
 
     // Exibe os valores lidos no Monitor Serial
     Serial.print("horas= ");
@@ -50,6 +60,5 @@ void loop() {
 
     // Envia o total em segundos de volta ao dispositivo Bluetooth
     bluetooth.print(" total em seg= ");
-    bluetooth.println(total);
-  }
+    bluetooth.println(total);  
 }
